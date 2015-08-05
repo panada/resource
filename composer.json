@@ -1,6 +1,6 @@
 {
-    "name": "panada/session",
-    "description": "A standalone Panada session package",
+    "name": "panada/resources",
+    "description": "Core package of Panada Framework",
     "homepage": "http://panadaframework.com/",
     "license": "BSD license",
     "authors": [
@@ -16,14 +16,15 @@
         "source": "https://github.com/panada/Panada/"
     },
     "require": {
-        "php": ">=5.4.0"
+        "php": ">=5.4.0",
+        "panada/utilities": "*"
     },
     "require-dev": {
         "phpunit/phpunit": "4.*"
     },
     "autoload": {
         "psr-4": {
-            "Panada\\Session\\": ""
+            "Panada\\Resources\\": ""
         }
     },
     "minimum-stability": "dev"
