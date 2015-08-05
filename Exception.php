@@ -1,6 +1,6 @@
 <?php
 
-namespace Panada\Resources;
+namespace Panada\Resource;
 
 /**
  * @author kandar <iskandarsoesman@gmail.com>
@@ -9,7 +9,7 @@ class Exception extends \Exception
 {
     public function __construct()
     {
-        $this->response = \Panada\Resources\Response::getInstance();
+        $this->response = \Panada\Resource\Response::getInstance();
     }
     
     public function main($exception)

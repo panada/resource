@@ -1,9 +1,9 @@
 <?php
 
-namespace Panada\Resources;
+namespace Panada\Resource;
 
 use Panada;
-use Panada\Resources\Loader;
+use Panada\Resource\Loader;
 
 /**
  * Handler for controller process.
@@ -12,7 +12,7 @@ use Panada\Resources\Loader;
  * @link    http://panadaframework.com/
  * @license http://www.opensource.org/licenses/bsd-license.php
  * @since   version 1.0.0
- * @package Resources
+ * @package Resource
  */
 class Controller
 {    
@@ -31,7 +31,7 @@ class Controller
 	public function __get($class)
     {    
         $classNamespace = [
-            'response' => 'Panada\Resources\Response',
+            'response' => 'Panada\Resource\Response',
 			'uri' => 'Panada\Request\Uri'
         ];
         

@@ -1,6 +1,6 @@
 <?php
 
-namespace Panada\Resources;
+namespace Panada\Resource;
 
 /**
  * @author kandar <iskandarsoesman@gmail.com>

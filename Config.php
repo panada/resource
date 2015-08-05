@@ -1,13 +1,13 @@
 <?php
 
-namespace Panada\Resources;
+namespace Panada\Resource;
 
-use Panada\Resources\Loader;
+use Panada\Resource\Loader;
 
 /**
  * Handler for configuration.
  *
- * @package  Resources
+ * @package  Resource
  * @link     http://panadaframework.com/
  * @license  http://www.opensource.org/licenses/bsd-license.php
  * @author   Iskandar Soesman <k4ndar@yahoo.com>

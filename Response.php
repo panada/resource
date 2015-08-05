@@ -1,6 +1,6 @@
 <?php
 
-namespace Panada\Resources;
+namespace Panada\Resource;
 
 class Response extends \Panada\Utilities\Factory
 {

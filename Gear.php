@@ -1,6 +1,6 @@
 <?php
 
-namespace Panada\Resources;
+namespace Panada\Resource;
 
 use Panada;
 
@@ -10,12 +10,12 @@ class Gear
     
     public function __construct()
     {
-        $exception = new Panada\Resources\Exception;
+        $exception = new Panada\Resource\Exception;
         
         set_exception_handler([$exception, 'main']);
         set_error_handler([$exception, 'errorHandler'], E_ALL);
         
-        $this->response     = Panada\Resources\Response::getInstance();
+        $this->response     = Panada\Resource\Response::getInstance();
         $this->uri          = Panada\Request\Uri::getInstance();
         $this->firstUriPath = ucwords($this->uri->getController());
         
@@ -39,7 +39,7 @@ class Gear
         }
         catch(\Exception $e) {
             
-            Panada\Resources\Config::routes();
+            Panada\Resource\Config::routes();
             
             $route = Panada\Router\Routes::getInstance()
                 ->parse(
