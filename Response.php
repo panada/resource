@@ -2,7 +2,7 @@
 
 namespace Panada\Resource;
 
-class Response extends \Panada\Utilities\Factory
+class Response extends \Panada\Utility\Factory
 {
     private static $headers = [];
     private static $body;

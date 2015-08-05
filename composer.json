@@ -1,5 +1,5 @@
 {
-    "name": "panada/resources",
+    "name": "panada/resource",
     "description": "Core package of Panada Framework",
     "homepage": "http://panadaframework.com/",
     "license": "BSD license",
@@ -16,8 +16,8 @@
         "source": "https://github.com/panada/Panada/"
     },
     "require": {
-        "php": ">=5.4.0",
-        "panada/utilities": "*"
+        "php": ">=5.6",
+        "panada/utility": "*"
     },
     "require-dev": {
         "phpunit/phpunit": "4.*"
