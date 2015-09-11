@@ -43,7 +43,7 @@ class Gear
             
             $route = Panada\Router\Routes::getInstance()
                 ->parse(
-                    $_SERVER['REQUEST_METHOD'],
+                    $this->uri->getRequestMethod(),
                     '/'.$this->uri->getPathInfo()
                 );
             
