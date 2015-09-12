@@ -7,6 +7,8 @@ namespace Panada\Resource;
  */
 class Exception extends \Exception
 {
+    use Controller;
+    
     public function __construct()
     {
         $this->response = \Panada\Resource\Response::getInstance();
@@ -37,7 +39,7 @@ class Exception extends \Exception
         }
         
         $this->response->setBody(
-            (new Controller)->output('errors/'.$code, $vars)
+            $this->output('errors/'.$code, $vars)
         );
         
         $this->response->output();

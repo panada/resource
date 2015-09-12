@@ -47,21 +47,47 @@ class Gear
                     '/'.$this->uri->getPathInfo()
                 );
             
-            if(! $route) {
-                if( get_class($e) == 'ErrorException' ) {
-                    throw $e;
+            if($route) {
+                try{
+                    $instance   = new $route['controller'];
+                    $action     = $route['action'];
+                    $request    = $route['args'];
                 }
+                catch(\Exception $e) {
+                    throw new \Exception('Routing for GET /'.$this->uri->getController().' is available but no controller or method can handle it. Please check your routing config.');
+                }
+            }
+            else {
+                $exception = 'No controller or routing config available for GET /'.$this->uri->getPathInfo();
+                $maps = Loader::$maps;
                 
-                throw new \Exception('No controller or routing config available for GET /'.$this->uri->getPathInfo());
-            }
-            
-            try{
-                $instance   = new $route['controller'];
-                $action     = $route['action'];
-                $request    = $route['args'];
-            }
-            catch(\Exception $e) {
-                throw new \Exception('Routing for GET /'.$this->uri->getController().' is available but no controller or method can handle it. Please check your routing config.');
+                // module handler
+                if(isset($maps['Module'])){
+                    
+                    $controllerNamespace = 'Module\\'.$this->firstUriPath.'\\Controller';
+                    
+                    if(! $controller = $this->uri->getSegment(1)){
+                        $controller = 'Home';
+                    }
+                    
+                    $controllerNamespace .= '\\'.ucwords($controller);
+                    
+                    if(! $action = $this->uri->getSegment(2)){
+                        $action = 'index';
+                    }
+                    
+                    $request = $this->uri->getRequests(3);
+                    
+                    try{
+                        $instance = new $controllerNamespace;
+                    }
+                    catch(\Exception $e) {
+                        throw new \Exception($exception);
+                    }
+                }
+                else {
+                    throw new \Exception($exception);
+                }
             }
         }
 

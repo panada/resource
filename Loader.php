@@ -33,7 +33,7 @@ class Loader
         }
         catch(\Exception $e) {
             if( substr($e->getMessage(), 0, 7) == 'include' ) {
-                $this->composerGetMap($class);
+                $this->composerGetMap($class, $prefix);
             }
             else {
                 throw $e;
@@ -45,7 +45,7 @@ class Loader
     /**
      * A better way to autoload composer base file without the need of vendor/autoload.php native file
      */
-    private function composerGetMap($class)
+    private function composerGetMap($class, $prefix)
     {
         // file already included, no need to proceed.
         if( isset(self::$psrIncluded[$class]) ) {
@@ -133,7 +133,7 @@ class Loader
         catch(\Exception $e) {
             if( substr($e->getMessage(), 0, 7) == 'include' ) {
                 
-                $trace = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, 3)[3];
+                $trace = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, 3)[2];
         
                 throw new \ErrorException('Resource ' . $file . ' not available! please check your class or namespace name. Exception error message is: '.$e->getMessage(), 0, 1, $trace['file'], $trace['line']);
             }
