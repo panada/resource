@@ -14,7 +14,7 @@ use Panada\Resource\Loader;
  * @since   version 1.0.0
  * @package Resource
  */
-class Controller
+trait Controller
 {    
     private $childNamespace;
 	private $viewCache;
