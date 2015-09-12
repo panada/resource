@@ -8,15 +8,15 @@ class Gear
 {
     private $body;
     
-    public function __construct()
+    public function __construct(Panada\Request\Uri $uri)
     {
         $exception = new Panada\Resource\Exception;
         
         set_exception_handler([$exception, 'main']);
         set_error_handler([$exception, 'errorHandler'], E_ALL);
         
+        $this->uri          = $uri;
         $this->response     = Panada\Resource\Response::getInstance();
-        $this->uri          = Panada\Request\Uri::getInstance();
         $this->firstUriPath = ucwords($this->uri->getController());
         
         $this->controllerHandler();
