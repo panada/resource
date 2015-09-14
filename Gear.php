@@ -38,59 +38,75 @@ class Gear
             $instance = new $controllerNamespace;
         }
         catch(\Exception $e) {
+            $this->moduleHandler();
             
-            Panada\Resource\Config::routes();
+            return;
+        }
+        
+        $this->run($instance, $action, $request);
+    }
+    
+    private function moduleHandler()
+    {
+        $controllerNamespace = 'Module\\'.$this->firstUriPath.'\\Controller';
+        
+        if(! $controller = $this->uri->getSegment(1)){
+            $controller = 'Home';
+        }
+        
+        $controllerNamespace .= '\\'.ucwords($controller);
+        
+        if(! $action = $this->uri->getSegment(2)){
+            $action = 'index';
+        }
+        
+        $request = $this->uri->getRequests(3);
+        
+        try{
+            $instance = new $controllerNamespace;
+        }
+        catch(\Exception $e) {
+            $this->routingHandler();
             
-            $route = Panada\Router\Routes::getInstance()
-                ->parse(
-                    $this->uri->getRequestMethod(),
-                    '/'.$this->uri->getPathInfo()
-                );
+            return;
+        }
+        
+        $this->run($instance, $action, $request);
+    }
+    
+    private function routingHandler()
+    {
+        Panada\Resource\Config::routes();
             
-            if($route) {
-                try{
-                    $instance   = new $route['controller'];
-                    $action     = $route['action'];
-                    $request    = $route['args'];
-                }
-                catch(\Exception $e) {
-                    throw new \Exception('Routing for GET /'.$this->uri->getController().' is available but no controller or method can handle it. Please check your routing config.');
-                }
+        $route = Panada\Router\Routes::getInstance()
+            ->parse(
+                $this->uri->getRequestMethod(),
+                '/'.$this->uri->getPathInfo()
+            );
+        
+        if($route) {
+            try{
+                $this->run(new $route['controller'], $route['action'], $route['args']);
             }
-            else {
-                $exception = 'No controller or routing config available for GET /'.$this->uri->getPathInfo();
-                $maps = Loader::$maps;
-                
-                // module handler
-                if(isset($maps['Module'])){
-                    
-                    $controllerNamespace = 'Module\\'.$this->firstUriPath.'\\Controller';
-                    
-                    if(! $controller = $this->uri->getSegment(1)){
-                        $controller = 'Home';
-                    }
-                    
-                    $controllerNamespace .= '\\'.ucwords($controller);
-                    
-                    if(! $action = $this->uri->getSegment(2)){
-                        $action = 'index';
-                    }
-                    
-                    $request = $this->uri->getRequests(3);
-                    
-                    try{
-                        $instance = new $controllerNamespace;
-                    }
-                    catch(\Exception $e) {
-                        throw new \Exception($exception);
-                    }
-                }
-                else {
-                    throw new \Exception($exception);
-                }
+            catch(\Exception $e) {
+                throw new \Exception('Routing for GET /'.$this->uri->getController().' is available but no controller or method can handle it. Please check your routing config.');
             }
         }
-
+        else {
+            throw new \Exception('No controller, module or routing config available for GET /'.$this->uri->getPathInfo());
+        }
+    }
+    
+    /**
+     * Call the controller's method
+     *
+     * @param  object $instance
+     * @param  string $method
+     * @param  array  $request
+     * @return void
+     */
+    private function run($instance, $action, $request)
+    {
         try{
             $this->response->setBody(
                 call_user_func_array([$instance, $action], $request)
