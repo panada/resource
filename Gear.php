@@ -6,7 +6,8 @@ use Panada\Request\Uri;
 use Panada\Router\Routes;
 use Panada\Resource\Config;
 use Panada\Resource\Response;
-use Panada\Resource\Exception;
+use Panada\ResourceHTTPException;
+use Panada\Resource\HTTPException;
 
 class Gear
 {
@@ -95,11 +96,11 @@ class Gear
                 $this->run(new $route['controller'], $route['action'], $route['args']);
             }
             catch(\Exception $e) {
-                throw new \Exception('Routing for GET /'.$this->uri->getController().' is available but no controller or method can handle it. Please check your routing config.');
+                throw new HTTPException('Routing for GET /'.$this->uri->getController().' is available but no controller or method can handle it. Please check your routing config.');
             }
         }
         else {
-            throw new \Exception('No controller, module or routing config available for GET /'.$this->uri->getPathInfo());
+            throw new HTTPException('No controller, module or routing config available for GET /'.$this->uri->getPathInfo());
         }
     }
     
@@ -121,7 +122,7 @@ class Gear
         catch(\Exception $e) {
             
             if ( substr($e->getMessage(), 0, 20) == 'call_user_func_array' ) {
-                throw new \Exception('No action or routing config available for GET /'.$this->uri->getPathInfo());
+                throw new HTTPException('No action or routing config available for GET /'.$this->uri->getPathInfo());
             }
             else {            
                 throw $e;
@@ -140,7 +141,6 @@ class Gear
             echo new self($errorReporting);
         }
         catch(\Exception $e){
-            
             echo (new Exception(Response::getInstance()))->main($e)->output();
         }
     }
