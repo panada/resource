@@ -9,26 +9,38 @@ class Exception extends \Exception
 {
     use Controller;
     
-    public function __construct()
+    public function __construct($response)
     {
-        $this->response = \Panada\Resource\Response::getInstance();
+        $this->response = $response;
     }
     
     public function main($exception)
     {
+        if (PHP_SAPI == 'cli') {
+            $errorMessage = $exception->getMessage()
+                ."\nFile: ".$exception->getFile()
+                    .' on line '.$exception->getLine()
+                ."\n\n".$exception->getTraceAsString()
+                ."\n";
+            // exit with an error code
+            exit($errorMessage);
+        }
+        
         // all errors thrown by 'Exception' class will treat
         // as 404 error type, else will treat as 500
         if( get_class($exception) == 'Exception' ) {
             $code = 404;
-            $this->response->setStatus('HTTP/1.0 404 Not Found', $code);
+            $this->response->setStatusCode($code);
             $vars = [
                 'message' => $exception->getMessage(),
                 'trace' => $exception->getTraceAsString(),
             ];
+            
+            $errorMessage = 'Error 404 Page Not Found: '.$exception->getMessage();
         }
         else {
             $code = 500;
-            $this->response->setStatus('HTTP/1.1 500 Internal Server Error', $code);
+            $this->response->setStatusCode($code);
             $vars = [
                 'message' => $exception->getMessage(),
                 'line' => $exception->getLine(),
@@ -36,14 +48,20 @@ class Exception extends \Exception
                 'trace' => $exception->getTraceAsString(),
                 'code' => $this->viewSource($exception->getFile(), $exception->getLine()),
             ];
+            
+            $errorMessage = 'Error '.$exception->getMessage().' in '.$exception->getFile().' line: '.$exception->getLine();
         }
+        
+        // Write the error to log file
+        @error_log($errorMessage);
+        
+        $this->uri->setConfig(['assetPath' => '/']);
         
         $this->response->setBody(
             $this->output('errors/'.$code, $vars)
         );
         
-        $this->response->output();
-        exit;
+        return $this->response;
     }
 
     public function errorHandler($errno, $message, $file, $line)

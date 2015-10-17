@@ -2,16 +2,27 @@
 
 namespace Panada\Resource;
 
-use Panada;
+use Panada\Request\Uri;
+use Panada\Router\Routes;
+use Panada\Resource\Config;
+use Panada\Resource\Response;
+use Panada\Resource\Exception;
 
 class Gear
 {
     private $body;
     
-    public function __construct(Panada\Request\Uri $uri, Panada\Resource\Response $response)
+    public function __construct($errorReporting)
     {
-        $this->uri          = $uri;
-        $this->response     = $response;
+        $this->uri      = Uri::getInstance();
+        $this->response = Response::getInstance();
+        
+        // Exception handler
+        $exception = new Exception($this->response);
+                
+        set_exception_handler([$exception, 'main']);
+        set_error_handler([$exception, 'errorHandler'], $errorReporting);
+        
         $this->firstUriPath = ucwords($this->uri->getController());
         
         $this->controllerHandler();
@@ -71,9 +82,9 @@ class Gear
     
     private function routingHandler()
     {
-        Panada\Resource\Config::routes();
+        Config::routes();
             
-        $route = Panada\Router\Routes::getInstance()
+        $route = Routes::getInstance()
             ->parse(
                 $this->uri->getRequestMethod(),
                 '/'.$this->uri->getPathInfo()
@@ -109,16 +120,28 @@ class Gear
         }
         catch(\Exception $e) {
             
-            if ( substr($e->getMessage(), 0, 4) == 'call_user_func' ) {
+            if ( substr($e->getMessage(), 0, 20) == 'call_user_func_array' ) {
                 throw new \Exception('No action or routing config available for GET /'.$this->uri->getPathInfo());
             }
-            
-            throw $e;
+            else {            
+                throw $e;
+            }
         }
     }
     
-    public function output()
+    public function __toString()
     {
-        $this->response->output();
+        return $this->response->output();
+    }
+    
+    public static function send($errorReporting = E_ALL)
+    {
+        try{
+            echo new self($errorReporting);
+        }
+        catch(\Exception $e){
+            
+            echo (new Exception(Response::getInstance()))->main($e)->output();
+        }
     }
 }
