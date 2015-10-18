@@ -110,7 +110,12 @@ class Gear
         Router::$defaults = $routes['defaults'];
         
         foreach($routes['route'] as $name => $route) {
-            Router::route($name, ['url' => $route['url']], ['class' => $route['controller'], 'method' => $route['action']]);
+            $class = $route['controller'];
+            $method = $route['action'];
+            
+            unset($route['controller'], $route['action']);
+            
+            Router::route($name, $route, ['class' => $class, 'method' => $method]);
         }
         
         // match
