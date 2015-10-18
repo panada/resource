@@ -2,6 +2,14 @@
 
 namespace Panada\Resource;
 
+/**
+ * @author  kandar <iskandarsoesman@gmail.com>
+ * @link    http://panadaframework.com/
+ * @license http://www.opensource.org/licenses/bsd-license.php
+ * @since   version 2.0.0
+ * @package Resource
+ * 
+ */
 class Response extends \Panada\Utility\Factory
 {
     public static $statusCode = 200;
@@ -129,6 +137,11 @@ class Response extends \Panada\Utility\Factory
         self::$headers[$key] = $value;
     }
     
+    public function getStatusCode()
+    {
+        return self::$statusCode;
+    }
+    
     public function setStatusCode($statusCode)
     {
         self::$statusCode = $statusCode;
@@ -143,8 +156,9 @@ class Response extends \Panada\Utility\Factory
     
     public function redirect($location, $statusCode = 302)
     {
-        if ( substr($location,0,4) != 'http' )
+        if (substr($location,0,4) != 'http') {
             $location = \Panada\Request\Uri::getInstance()->location(ltrim($location, '/'));
+        }
         
         self::$statusText = 'Location: '.$location;
         self::$statusCode = $statusCode;

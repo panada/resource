@@ -8,7 +8,7 @@ use Panada\Resource\Loader;
 /**
  * Handler for controller process.
  *
- * @author  Iskandar Soesman <k4ndar@yahoo.com>
+ * @author	kandar <iskandarsoesman@gmail.com>
  * @link    http://panadaframework.com/
  * @license http://www.opensource.org/licenses/bsd-license.php
  * @since   version 1.0.0

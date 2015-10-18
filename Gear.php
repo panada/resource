@@ -3,16 +3,22 @@
 namespace Panada\Resource;
 
 use Panada\Request\Uri;
-use Panada\Router\Routes;
 use Panada\Resource\Config;
 use Panada\Resource\Response;
-use Panada\ResourceHTTPException;
 use Panada\Resource\HTTPException;
+use Panada\Router\Routes as Router;
 
+/**
+ * @author  kandar <iskandarsoesman@gmail.com>
+ * 
+ * @link    http://panadaframework.com/
+ *
+ * @license http://www.opensource.org/licenses/bsd-license.php
+ *
+ * @since   version 2.0.0
+ */
 class Gear
 {
-    private $body;
-    
     public function __construct($errorReporting)
     {
         $this->uri      = Uri::getInstance();
@@ -26,7 +32,11 @@ class Gear
         
         $this->firstUriPath = ucwords($this->uri->getController());
         
-        $this->controllerHandler();
+        $this->requstHandler = Config::main()['requestHandlerRule'];
+        
+        $handler = current($this->requstHandler);
+        
+        $this->$handler();
     }
     
     /**
@@ -45,9 +55,15 @@ class Gear
             $instance = new $controllerNamespace;
         }
         catch(\Exception $e) {
-            $this->moduleHandler();
             
-            return;
+            if($nextHandler = next($this->requstHandler)) {
+                $this->$nextHandler();
+                
+                return;
+            }
+            else {
+                $this->throwHTTPException();
+            }
         }
         
         $this->run($instance, $action, $request);
@@ -73,9 +89,14 @@ class Gear
             $instance = new $controllerNamespace;
         }
         catch(\Exception $e) {
-            $this->routingHandler();
-            
-            return;
+            if($nextHandler = next($this->requstHandler)) {
+                $this->$nextHandler();
+                
+                return;
+            }
+            else {
+                $this->throwHTTPException();
+            }
         }
         
         $this->run($instance, $action, $request);
@@ -83,25 +104,53 @@ class Gear
     
     private function routingHandler()
     {
-        Config::routes();
-            
-        $route = Routes::getInstance()
-            ->parse(
-                $this->uri->getRequestMethod(),
-                '/'.$this->uri->getPathInfo()
-            );
+        $routes = Config::routes();
         
-        if($route) {
+        Router::$patterns = $routes['pattern'];
+        Router::$defaults = $routes['defaults'];
+        
+        foreach($routes['route'] as $name => $route) {
+            Router::route($name, ['url' => $route['url']], ['class' => $route['controller'], 'method' => $route['action']]);
+        }
+        
+        // match
+        if($result = Router::find()) {
+            
             try{
-                $this->run(new $route['controller'], $route['action'], $route['args']);
+                $instance = new $result['class'];
             }
             catch(\Exception $e) {
-                throw new HTTPException('Routing for GET /'.$this->uri->getController().' is available but no controller or method can handle it. Please check your routing config.');
+                if($nextHandler = next($this->requstHandler)) {
+                    $this->$nextHandler();
+                    
+                    return;
+                }
+                else {
+                    $this->throwHTTPException();
+                }
             }
+            
+            $variables = Router::$variables;
+            unset($variables['method'], $variables['protocol'], $variables['subdomain'], $variables['domain'], $variables['port']);
+            $args = array_values($variables);
+            
+            $this->run($instance, $result['method'], $args);
         }
         else {
-            throw new HTTPException('No controller, module or routing config available for GET /'.$this->uri->getPathInfo());
+            if($nextHandler = next($this->requstHandler)) {
+                $this->$nextHandler();
+                
+                return;
+            }
+            else {
+                $this->throwHTTPException();
+            }
         }
+    }
+    
+    private function throwHTTPException()
+    {
+        throw new HTTPException('No controller available for GET /'.$this->uri->getPathInfo());
     }
     
     /**
