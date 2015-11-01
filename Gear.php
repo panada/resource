@@ -31,8 +31,8 @@ class Gear
         set_error_handler([$exception, 'errorHandler'], $errorReporting);
         
         $this->firstUriPath = ucwords($this->uri->getController());
-        
-        $this->requstHandler = Config::main()['requestHandlerRule'];
+        $this->config = Config::main();
+        $this->requstHandler = $this->config['requestHandlerRule'];
         
         $handler = current($this->requstHandler);
         
@@ -168,6 +168,11 @@ class Gear
      */
     private function run($instance, $action, $request)
     {
+        if(! method_exists($instance, $action)) {
+            $request = array_merge([$action], $request);
+            $action = $this->config['aliasAction'];
+        }
+        
         try{
             $this->response->setBody(
                 call_user_func_array([$instance, $action], $request)
