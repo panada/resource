@@ -24,7 +24,7 @@ class Loader
     
     public function init($class)
     {
-        $prefix = explode('\\', $class);
+        $prefix = array_merge(explode('\\', $class), [null]);
         $maps = self::$maps;
         $folder = null;
         
