@@ -162,6 +162,7 @@ class Response extends \Panada\Utility\Factory
         
         self::$statusText = 'Location: '.$location;
         self::$statusCode = $statusCode;
+        self::$body = '<html><head><meta http-equiv="refresh" content="0; url='.$location.'" /></head><body></body></html>';
     }
     
     public function getHeaders()
