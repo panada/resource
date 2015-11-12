@@ -22,7 +22,10 @@ class Gear
     public function __construct($errorReporting)
     {
         $this->config   = Config::main();
-        $this->uri      = Uri::getInstance(['defaultController' => $this->config['defaultController']]);
+        $this->uri      = Uri::getInstance([
+            'defaultController' => $this->config['defaultController'],
+            'defaultAction' => $this->config['defaultAction']
+        ]);
         $this->response = Response::getInstance();
         
         // Exception handler
