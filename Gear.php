@@ -21,17 +21,17 @@ class Gear
 {
     public function __construct($errorReporting)
     {
-        $this->uri      = Uri::getInstance();
+        $this->config   = Config::main();
+        $this->uri      = Uri::getInstance(['defaultController' => $this->config['defaultController']]);
         $this->response = Response::getInstance();
         
         // Exception handler
-        $exception = new Exception($this->response);
+        $exception      = new Exception($this->response);
                 
         set_exception_handler([$exception, 'main']);
         set_error_handler([$exception, 'errorHandler'], $errorReporting);
         
         $this->firstUriPath = ucwords($this->uri->getController());
-        $this->config = Config::main();
         $this->requstHandler = $this->config['requestHandlerRule'];
         
         $handler = current($this->requstHandler);
@@ -74,13 +74,13 @@ class Gear
         $controllerNamespace = 'Module\\'.$this->firstUriPath.'\\Controller';
         
         if(! $controller = $this->uri->getSegment(1)){
-            $controller = 'Home';
+            $controller = $this->config['defaultController'];
         }
         
         $controllerNamespace .= '\\'.ucwords($controller);
         
         if(! $action = $this->uri->getSegment(2)){
-            $action = 'index';
+            $action = $this->config['defaultAction'];
         }
         
         $request = $this->uri->getRequests(3);
