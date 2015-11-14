@@ -95,7 +95,7 @@ class Loader
         
         $trace = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, 3)[2];
         
-        throw new \ErrorException('Resource ' . $class . ' not available! please check your class or namespace name.', 0, 1, $trace['file'], $trace['line']);
+        throw new LoaderException('Resource ' . $class . ' not available! please check your class or namespace name.', 0, 1, $trace['file'], $trace['line']);
     }
     
     /**

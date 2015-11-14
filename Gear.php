@@ -6,6 +6,7 @@ use Panada\Request\Uri;
 use Panada\Resource\Config;
 use Panada\Resource\Response;
 use Panada\Resource\HTTPException;
+use Panada\Resource\LoaderException;
 use Panada\Router\Routes as Router;
 
 /**
@@ -57,7 +58,7 @@ class Gear
         try{
             $instance = new $controllerNamespace;
         }
-        catch(\Exception $e) {
+        catch(LoaderException $e) {
             
             if($nextHandler = next($this->requstHandler)) {
                 $this->$nextHandler();
@@ -91,7 +92,7 @@ class Gear
         try{
             $instance = new $controllerNamespace;
         }
-        catch(\Exception $e) {
+        catch(LoaderException $e) {
             if($nextHandler = next($this->requstHandler)) {
                 $this->$nextHandler();
                 
@@ -127,7 +128,7 @@ class Gear
             try{
                 $instance = new $result['class'];
             }
-            catch(\Exception $e) {
+            catch(LoaderException $e) {
                 if($nextHandler = next($this->requstHandler)) {
                     $this->$nextHandler();
                     
