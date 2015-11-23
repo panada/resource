@@ -64,6 +64,17 @@ class Loader
             self::$psrs['cm'] = include self::$maps['vendor'].'composer/autoload_classmap.php';
         }
         
+        // psr-0 handler
+        if($p = explode('_', $class)) {
+            if(isset(self::$psrs['ns'][$p[0].'_'][0])) {
+                
+                $this->composerALpsr0(self::$psrs['ns'][$p[0].'_'][0].'/', $class);
+                self::$psrIncluded[$class] = 1;
+                
+                return;
+            }
+        }
+        
         $ns = null;
         
         foreach(explode('\\', $class) as $path) {
@@ -77,6 +88,7 @@ class Loader
                 if( isset(self::$psrs[$psrType][$ns]) ) {
                     
                     $this->$method($ns, $folder[$ns], $class, $psrType);
+                    self::$psrIncluded[$class] = 1;
                     
                     return;
                 }
@@ -86,6 +98,7 @@ class Loader
                 if( isset(self::$psrs[$psrType][$map]) ) {
                     
                     $this->$method($map, $folder[$map], $class, $psrType);
+                    self::$psrIncluded[$class] = 1;
                     
                     return;
                 }
@@ -96,6 +109,16 @@ class Loader
         $trace = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, 3)[2];
         
         throw new LoaderException('Resource ' . $class . ' not available! please check your class or namespace name.', 0, 1, $trace['file'], $trace['line']);
+    }
+    
+    /**
+     * Composer autoload psr0
+     */
+    private function composerALpsr0($file, $class)
+    {
+        $file .= str_replace('_', '/', $class).'.php';
+        
+        $this->composerIncludeFile($file);
     }
     
     /**
