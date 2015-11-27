@@ -32,7 +32,7 @@ class Exception extends \Exception
         
         // all errors thrown by 'HTTPException' class will treat
         // as 404 error type, else will treat as 500
-        if( get_class($exception) == 'Panada\Resource\HTTPException' ) {
+        if( get_class($exception) == 'Panada\Http\HTTPException' ) {
             $code = 404;
             $this->response->setStatusCode($code);
             $vars = [
