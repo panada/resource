@@ -122,8 +122,16 @@ class Gear
             Router::route($name, $route, ['class' => $class, 'method' => $method]);
         }
         
+        $dispatcher = [
+            'host' => $this->uri->getHost(),
+            'port' => $this->uri->getPort(),
+            'method' => $this->uri->getRequestMethod(),
+            'scheme' => $this->uri->getScheme(),
+            'path' => '/'.$this->uri->getPathInfo()
+        ];
+        
         // match
-        if($result = Router::find()) {
+        if($result = Router::find($dispatcher)) {
             
             try{
                 $instance = new $result['class'];
