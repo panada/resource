@@ -31,8 +31,8 @@ trait Controller
 	public function __get($class)
     {    
         $classNamespace = [
-            'response' => 'Panada\Resource\Response',
-			'uri' => 'Panada\Request\Uri'
+            'response' => 'Panada\Http\Response',
+			'uri' => 'Panada\Http\Uri'
         ];
         
 		try {

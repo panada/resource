@@ -2,10 +2,10 @@
 
 namespace Panada\Resource;
 
-use Panada\Request\Uri;
+use Panada\Http\Uri;
+use Panada\Http\Response;
+use Panada\Http\HTTPException;
 use Panada\Resource\Config;
-use Panada\Resource\Response;
-use Panada\Resource\HTTPException;
 use Panada\Resource\LoaderException;
 use Panada\Router\Routes as Router;
 
