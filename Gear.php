@@ -20,13 +20,16 @@ use Panada\Router\Routes as Router;
  */
 class Gear
 {
-    public function __construct($errorReporting)
+    public function __construct(Uri $uri, $errorReporting)
     {
+        $this->uri      = $uri;
         $this->config   = Config::main();
-        $this->uri      = Uri::getInstance([
+        
+        $this->uri->setConfig([
             'defaultController' => $this->config['defaultController'],
             'defaultAction' => $this->config['defaultAction']
         ]);
+        
         $this->response = Response::getInstance();
         
         // Exception handler
@@ -122,7 +125,7 @@ class Gear
             Router::route($name, $route, ['class' => $class, 'method' => $method]);
         }
         
-        $dispatcher = [
+        $uriComponents = [
             'host' => $this->uri->getHost(),
             'port' => $this->uri->getPort(),
             'method' => $this->uri->getRequestMethod(),
@@ -131,7 +134,7 @@ class Gear
         ];
         
         // match
-        if($result = Router::find($dispatcher)) {
+        if($result = Router::find($uriComponents)) {
             
             try{
                 $instance = new $result['class'];
@@ -206,10 +209,10 @@ class Gear
         return $this->response->output();
     }
     
-    public static function send($errorReporting = E_ALL)
+    public static function send(Uri $uri, $errorReporting = E_ALL)
     {
         try{
-            echo new self($errorReporting);
+            echo new self($uri, $errorReporting);
         }
         catch(\Exception $e){
             echo (new Exception(Response::getInstance()))->main($e)->output();
