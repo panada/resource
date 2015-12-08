@@ -3,7 +3,6 @@
 namespace Panada\Resource;
 
 use Panada;
-use Panada\Resource\Loader;
 
 /**
  * Handler for controller process.
@@ -62,12 +61,12 @@ trait Controller
     {
 		$this->getChildInfo();
 		
-		$app = Loader::$maps['Controller'];
+		$app = Gear::$appDir;
 		
         $panadaFilePath = $app.'view/'.$panadaViewfile;
 		
 		if( $this->childClass['namespaceArray'][0] == 'Module' && !$fromMainView ) {
-            $panadaFilePath = Loader::$maps['Controller'].$this->childClass['namespaceArray'][0].'/'.$this->childClass['namespaceArray'][1].'/view/'.$panadaViewfile;
+            $panadaFilePath = $app.$this->childClass['namespaceArray'][0].'/'.$this->childClass['namespaceArray'][1].'/view/'.$panadaViewfile;
         }
 		
 		$this->viewFile = $panadaFilePath;

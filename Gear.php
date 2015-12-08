@@ -6,7 +6,7 @@ use Panada\Http\Uri;
 use Panada\Http\Response;
 use Panada\Http\HTTPException;
 use Panada\Resource\Config;
-use Panada\Resource\LoaderException;
+use Panada\Loader\LoaderException;
 use Panada\Router\Routes as Router;
 
 /**
@@ -20,6 +20,8 @@ use Panada\Router\Routes as Router;
  */
 class Gear
 {
+    public static $appDir;
+    
     public function __construct(Uri $uri, $errorReporting)
     {
         $this->uri      = $uri;
@@ -209,8 +211,10 @@ class Gear
         return $this->response->output();
     }
     
-    public static function send(Uri $uri, $errorReporting = E_ALL)
+    public static function send(Uri $uri, $appDir, $errorReporting = E_ALL)
     {
+        self::$appDir = $appDir;
+        
         try{
             echo new self($uri, $errorReporting);
         }

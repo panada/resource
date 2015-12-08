@@ -19,7 +19,7 @@ class Config
 
     private static function _cache($name)
     {
-        $app = Loader::$maps['Controller'];
+        $app = Gear::$appDir;
         
         if (!isset(self::$config[$name])) {
             $array = require $app . 'config/' . $name . '.php';
@@ -39,8 +39,6 @@ class Config
         if (isset(self::$config[$name])) {
             return self::$config[$name];
         }
-        
-        $app = Loader::$maps['Controller'];
         
         // Does the config file exists?
         try {
